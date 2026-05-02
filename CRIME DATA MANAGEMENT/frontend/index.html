@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crime Data Management</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ── Header ──────────────────────────────────────────── -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">⬡</div>
+    <div class="logo-text">Crime<span>DB</span></div>
+  </div>
+  <div class="header-badge">SECURE SYSTEM</div>
+</header>
+
+<!-- ── Toast ───────────────────────────────────────────── -->
+<div id="toast"></div>
+
+<!-- ── Main ────────────────────────────────────────────── -->
+<div class="container">
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('add')">
+      <span class="tab-icon">＋</span> Add Case
+    </button>
+    <button class="tab-btn" onclick="switchTab('view')">
+      <span class="tab-icon">◉</span> View Cases
+    </button>
+    <button class="tab-btn" onclick="switchTab('update')">
+      <span class="tab-icon">✎</span> Update Case
+    </button>
+    <button class="tab-btn" onclick="switchTab('delete')">
+      <span class="tab-icon">✕</span> Delete Case
+    </button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       TAB 1 — ADD CASE
+  ════════════════════════════════════════════════════ -->
+  <div id="tab-add" class="tab-panel active">
+    <div class="card">
+      <div class="section-title">Register New Crime Case</div>
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label for="add-type">Crime Type</label>
+          <input id="add-type" type="text" placeholder="e.g. Theft, Fraud, Assault" />
+        </div>
+
+        <div class="form-group">
+          <label for="add-location">Location</label>
+          <input id="add-location" type="text" placeholder="e.g. Gandhipuram, Coimbatore" />
+        </div>
+
+        <div class="form-group full">
+          <label for="add-description">Description</label>
+          <textarea id="add-description" placeholder="Detailed description of the incident..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="add-status">Case Status</label>
+          <select id="add-status">
+            <option value="Open">🔴 Open</option>
+            <option value="Under Investigation">🟡 Under Investigation</option>
+            <option value="Closed">🟢 Closed</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="justify-content:flex-end">
+          <label>&nbsp;</label>
+          <div style="display:flex;gap:10px">
+            <button class="btn btn-secondary" onclick="clearAddForm()">Clear</button>
+            <button class="btn btn-primary" onclick="addCrime()">＋ Add Case</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       TAB 2 — VIEW CASES
+  ════════════════════════════════════════════════════ -->
+  <div id="tab-view" class="tab-panel">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem">
+      <div class="section-title" style="margin:0;border:none;padding:0">All Crime Cases</div>
+      <button class="btn btn-secondary" onclick="loadCrimes()" style="font-size:.8rem;padding:8px 18px">↻ Refresh</button>
+    </div>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Type</th>
+            <th>Location</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="crimes-table-body">
+          <tr><td colspan="6" class="empty-state"><span class="empty-icon">⬡</span>Loading records...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       TAB 3 — UPDATE CASE
+  ════════════════════════════════════════════════════ -->
+  <div id="tab-update" class="tab-panel">
+    <div class="card">
+      <div class="section-title">Update Crime Case</div>
+
+      <!-- Lookup by ID -->
+      <div class="lookup-row">
+        <div class="form-group">
+          <label for="update-search-id">Enter Case ID to Load</label>
+          <input id="update-search-id" type="number" placeholder="e.g. 3" min="1" />
+        </div>
+        <button class="btn btn-secondary" onclick="loadCaseForEdit()">Load Case</button>
+      </div>
+
+      <!-- Update Form (hidden until loaded) -->
+      <div id="update-form-section" style="display:none">
+        <input type="hidden" id="update-id" />
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label for="update-type">Crime Type</label>
+            <input id="update-type" type="text" placeholder="Crime type" />
+          </div>
+
+          <div class="form-group">
+            <label for="update-location">Location</label>
+            <input id="update-location" type="text" placeholder="Location" />
+          </div>
+
+          <div class="form-group full">
+            <label for="update-description">Description</label>
+            <textarea id="update-description" placeholder="Description..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="update-status">Case Status</label>
+            <select id="update-status">
+              <option value="Open">🔴 Open</option>
+              <option value="Under Investigation">🟡 Under Investigation</option>
+              <option value="Closed">🟢 Closed</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="justify-content:flex-end">
+            <label>&nbsp;</label>
+            <button class="btn btn-primary" onclick="updateCrime()">✎ Save Changes</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       TAB 4 — DELETE CASE
+  ════════════════════════════════════════════════════ -->
+  <div id="tab-delete" class="tab-panel">
+    <div class="card danger-card">
+      <div class="section-title">Delete Crime Case</div>
+      <p style="color:var(--text-dim);font-size:.9rem;margin-bottom:1.5rem">
+        Enter the Case ID to permanently remove it from the database. This action cannot be undone.
+      </p>
+      <div class="lookup-row">
+        <div class="form-group">
+          <label for="delete-id">Case ID</label>
+          <input id="delete-id" type="number" placeholder="Enter case ID" min="1" />
+        </div>
+        <button class="btn btn-danger" style="padding:10px 24px;font-size:.9rem" onclick="confirmDelete()">
+          ✕ Delete Case
+        </button>
+      </div>
+    </div>
+
+    <!-- Confirm box -->
+    <div id="confirm-box" class="card" style="display:none;border-color:rgba(231,76,60,.5)">
+      <p id="confirm-text" style="margin-bottom:1rem;color:var(--text);font-family:var(--font-mono);font-size:.9rem"></p>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-danger" style="padding:10px 24px" onclick="deleteCrime()">✕ Confirm Delete</button>
+        <button class="btn btn-secondary" onclick="cancelDelete()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /.container -->
+
+<script src="script.js"></script>
+</body>
+</html>
