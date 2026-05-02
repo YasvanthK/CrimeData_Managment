@@ -47,8 +47,7 @@ STEP 4 — Run the server
     Windows:
       java -cp backend;backend/mysql-connector-j-8.x.jar Server
 
-    Mac / Linux:
-      java -cp backend:backend/mysql-connector-j-8.x.jar Server
+    
 
   You should see:
     ==============================================
